@@ -1,0 +1,23 @@
+#!/bin/bash
+
+hostn=$(cat /etc/hostname)
+
+echo "Existing hostname is $hostn"
+
+while getopts n: option
+do
+    case "${option}"
+    in
+        n) $newhost=${OPTARG};;
+    esac
+done
+
+
+#change hostname in /etc/hosts & /etc/hostname
+sudo sed -i "s/$hostn/$newhost/g" /etc/hosts
+sudo sed -i "s/$hostn/$newhost/g" /etc/hostname
+
+#display new hostname
+echo "Your new hostname is $newhost"
+
+sudo reboot

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+
+while getopts l:a:n:c:m: option
+do
+    case "${option}"
+    in
+        a) NAME=${OPTARG};;
+        n) NODE_IP=${OPTARG};;
+        c) CLIENT_IP=${OPTARG};;
+        l) NODE_NUM=${OPTARG};;
+	m) NET_NAM=${OPTARG};;
+    esac
+done
+
+sudo awk '{if (index($1, "NETWORK_NAME") != 0) {print("NETWORK_NAME = \"$NET_NAM\"")} else print($0)}' /etc/indy/indy_config.py> /tmp/indy_config.py
+
+sudo mv /tmp/indy_config.py /etc/indy/indy_config.py
+
+
+SEED=$(pwgen -s  32 1)
+NODE_PORTS=$((9700 + $NODE_NUM))
+CLIENT_PORTS=$((9750 + $NODE_NUM))
+
+printf "\n USING SEED: $SEED \n"
+printf "node port: $NODE_PORTS\n"
+printf "client port: $CLIENT_PORTS\n"
+printf "node ip: $NODE_IP"
+sudo init_indy_node $NAME $NODE_IP "$NODE_PORTS" $CLIENT_IP "$CLIENT_PORT" $SEED
